@@ -3,11 +3,10 @@
 
 class Vacancy():
     """Класс для работы с вакансиями"""
-    __slots__ = 'id', 'name', 'url', 'salary', 'requirement'
+    __slots__ = 'name', 'url', 'salary', 'requirement'
 
-    def __init__(self, id: str, name: str, url: str, salary: [str|None], requirement: str):
+    def __init__(self, name: str, url: str, salary: [str|None], requirement: str):
         """Конструктор класса Vacancy"""
-        self.id = id
         self.name = name
         self.url = url
         self.salary = self.__valid_salary(salary)
@@ -47,12 +46,12 @@ class Vacancy():
         return self.__verify_data(self) <= self.__verify_data(other)
 
 
-if __name__ == "__main__":
-    vacancy1 = Vacancy("108971116", "Python Developer", "<https://hh.ru/vacancy/123456>", None,
-                      "Требования: опыт работы от 3 лет...")
-    print(f"For {vacancy1.name} salary {vacancy1.salary}")
-    vacancy2 = Vacancy("109680570", "Python Developer2", "<https://hh.ru/vacancy/123456>", "100000-150000 руб",
-                      "Требования: опыт работы от 3 лет...")
-    print(f"For {vacancy2.name} salary {vacancy2.salary}")
-
-    print(vacancy1 <= vacancy2)
+# if __name__ == "__main__":
+#     vacancy1 = Vacancy("Геофизик", "<https://hh.ru/vacancy/123456>", None,
+#                       "Требования: опыт работы от 1 года...")
+#     print(f"For {vacancy1.name} salary {vacancy1.salary}")
+#     vacancy2 = Vacancy("Геолог", "<https://hh.ru/vacancy/123456>", "100000-150000 руб",
+#                       "Требования: без опыта...")
+#     print(f"For {vacancy2.name} salary {vacancy2.salary}")
+#
+#     print(vacancy1 <= vacancy2)
