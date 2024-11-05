@@ -45,16 +45,6 @@ class HeadHunterAPI(Parser):
             print("#", end="")
         return self.vacancies
 
-    def optimized_list(self) -> list:
-        """Метод выборки полей вакансий: название, ссылка, зарплата, валюта, требования"""
-        optim = []
-        for row in self.vacancies:
-            if row["salary"]:
-                salary = f"{row["salary"]["from"]}-{row["salary"]["to"]} {row["salary"]["currency"]}"
-            else:
-                salary = None
-            optim.append({"name":row["name"], "url": row["alternate_url"], "salary" : salary, "requirement": row["snippet"]["requirement"]})
-        return optim
 
 # if __name__ == "__main__":
 #     hh_api = HeadHunterAPI()
