@@ -1,18 +1,16 @@
-
-def optimized_list(vacancies_from_hh) -> list:
-    """Метод выборки полей вакансий: название, ссылка, зарплата, валюта, требования"""
-    optim = []
-    for row in vacancies_from_hh:
-        if row["salary"]:
-            salary = f"{row["salary"]["from"]}-{row["salary"]["to"]} {row["salary"]["currency"]}"
-        else:
-            salary = None
-        optim.append({"name" :row["name"], "url": row["alternate_url"], "salary" : salary, "requirement": row["snippet"]["requirement"]})
-    return optim
+import json
+import re
 
 
-def filter_vacancies(vacancies_list, filter_words):
-    pass
+def filter_vacancies(vacancies_list_: list, filter_words: list) -> list:
+    """Функция ищет вакансии по ключевым словам."""
+    filtered_vacancies_ = []
+    pattern = "(?:" + "|".join(filter_words) + ")"
+    for vacancy in vacancies_list_:
+        if vacancy["snippet"]["requirement"]:
+            if bool(re.search(pattern, vacancy["snippet"]["requirement"], flags=re.IGNORECASE)):
+                filtered_vacancies_.append(vacancy)
+    return filtered_vacancies_
 
 
 def get_vacancies_by_salary(filtered_vacancies, salary_range):
@@ -29,3 +27,10 @@ def get_top_vacancies(sorted_vacancies, top_n):
 
 def print_vacancies(top_vacancies):
     pass
+
+if __name__ == "__main__":
+    with open('../data/vacancies_hh.json', encoding="utf-8") as file:
+        vacancies_list = json.load(file)
+
+    filtered_vacancies = filter_vacancies(vacancies_list, ['java', 'git'])
+    print(filtered_vacancies)

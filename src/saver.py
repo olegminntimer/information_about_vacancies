@@ -58,18 +58,18 @@ class JSONSaver(Saver):
         with open(self.__filename, encoding="utf-8") as file:
             vacancies = json.load(file)
         if isinstance(vacancy, Vacancy):
-            # vacancy = {"name": vacancy.name, "url": vacancy.url, "salary": vacancy.salary,
-            #            "requirement": vacancy.requirement}
-            # "salary": {"from": 1000000, "to": null, "currency": "RUR", "gross": false}
-
-        # Проверяем вакансию на совпадение по адресу "alternate_url"
+            vacancy_dict = vacancy.to_dict()
+        else:
+            print("Неправильный формат вакансии!")
+            return
+        # Проверяем вакансию на совпадение по полю "alternate_url"
         is_presence = False
         for i in vacancies:
-            if vacancy["alternate_url"] == i["alternate_url"]:
+            if vacancy_dict["alternate_url"] == i["alternate_url"]:
                 is_presence = True
         # Если нет совпадений, то добавляем в файл
         if not is_presence:
-            vacancies.append(vacancy)
+            vacancies.append(vacancy_dict)
             with open(self.__filename, "w", encoding="utf-8") as file:
                 json.dump(vacancies, file, ensure_ascii=False)
 
@@ -77,11 +77,14 @@ class JSONSaver(Saver):
         """Метод удаления информации о вакансии из файла."""
         with open(self.__filename, encoding="utf-8") as file:
             vacancies = json.load(file)
-        vacancy = {"name": vacancy.name, "url": vacancy.url, "salary": vacancy.salary,
-                   "requirement": vacancy.requirement}
+        if isinstance(vacancy, Vacancy):
+            vacancy_dict = vacancy.to_dict()
+        else:
+            print("Неправильный формат вакансии!")
+            return
         is_presence = False
         for i in vacancies:
-            if vacancy["url"] == i["url"]:
+            if vacancy_dict["alternate_url"] == i["alternate_url"]:
                 is_presence = True
                 vacancies.remove(i)
         if is_presence:
@@ -91,12 +94,11 @@ class JSONSaver(Saver):
             print("Такой вакансии нет в файле.")
 
 
-if __name__ == "__main__":
-    hh_api = HeadHunterAPI()
-    vacancies_list = hh_api.get_vacancies('python')
-    #     vacancies_optimized = hh_api.optimized_list()
-    json_saver = JSONSaver()
-    json_saver.save_to(vacancies_list)
+# if __name__ == "__main__":
+#     hh_api = HeadHunterAPI()
+#     vacancies_list = hh_api.get_vacancies('python')
+#     json_saver = JSONSaver()
+#     json_saver.save_to(vacancies_list)
 #     vacancy1 = Vacancy("Геофизик", "<https://hh.ru/vacancy/123456>", None,
 #                        "Требования: опыт работы от 1 года...")
 #     json_saver.add_vacancy(vacancy1)
