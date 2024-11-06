@@ -1,5 +1,7 @@
-import re
+# import re
 from typing import Any
+
+from src.utils import range_bounds_check
 
 
 class Vacancy():
@@ -16,27 +18,9 @@ class Vacancy():
     @classmethod
     def __valid_salary(cls, salary: Any) -> int | dict:
         """Приватный метод проверки диапазона зарплаты"""
-        if salary:
-            left_limit = None
-            right_limit = 0
-            for i in re.split('[- ]', salary):
-                if not isinstance(left_limit, int):
-                    try:
-                        left_limit = int(i)
-                    except ValueError:
-                        left_limit = 0
-                        continue
-                else:
-                    if right_limit == 0:
-                        try:
-                            right_limit = int(i)
-                            break
-                        except ValueError:
-                            continue
-            if (left_limit == 0) and (right_limit == 0):
-                return 0
-            else:
-                return {"from": left_limit, "to": right_limit, "currency": "RUB"}
+        limits = range_bounds_check(salary)
+        if limits:
+            return {"from": limits[0], "to": limits[1], "currency": "RUB"}
         else:
             return 0
 
@@ -68,17 +52,16 @@ class Vacancy():
         return {"name": self.name, "salary": self.salary, "alternate_url": self.url, "requirement": self.requirement}
 
 
-if __name__ == "__main__":
-    vacancy1 = Vacancy("Геофизик", None, "<https://hh.ru/vacancy/123456>",
-                       "Требования: опыт работы от 1 года...")
-    print(f"For {vacancy1.name} salary {vacancy1.salary}")
-    print(vacancy1.to_file())
-    vacancy2 = Vacancy("Геолог", "a 21", "<https://hh.ru/vacancy/123457>",
-                       "Требования: без опыта...")
-    print(f"For {vacancy2.name} salary {vacancy2.salary}")
-    print(vacancy2.to_file())
-    vacancy3 = Vacancy("Ведущий геолог", "150000 руб", "<https://hh.ru/vacancy/123458>",
-                       "Требования: опыта 3 года...")
-    print(f"For {vacancy3.name} salary {vacancy3.salary}")
-    print(vacancy3.to_file())
-    print(vacancy1 <= vacancy2)
+# if __name__ == "__main__":
+#     vacancy1 = Vacancy("Геофизик", 0, "<https://hh.ru/vacancy/123456>",
+#                        "Требования: опыт работы от 1 года...")
+#     print(vacancy1.to_file())
+#     vacancy2 = Vacancy("Геолог", "2aasd21sfgsg", "<https://hh.ru/vacancy/123457>",
+#                        "Требования: без опыта...")
+#     print(vacancy2.to_file())
+#     vacancy3 = Vacancy("Ведущий геолог", "150000 руб", "<https://hh.ru/vacancy/123458>",
+#                        "Требования: опыта 3 года...")
+#     print(vacancy3.to_file())
+#     print(vacancy1 == vacancy2)
+#     print(vacancy2 > vacancy3)
+#     print(vacancy1 > vacancy3)

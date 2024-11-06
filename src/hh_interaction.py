@@ -1,16 +1,10 @@
 import requests
-import pandas as pd
 
 from abc import ABC, abstractmethod
 
 
 class Parser(ABC):
     """Абстрактный класс подключения к API и получения вакансий."""
-
-    # @abstractmethod
-    # def __connection_to_api(self):
-    #     """Приватный абстрактный метод подключения к API."""
-    #     pass
 
     @abstractmethod
     def get_vacancies(self, keyword):
@@ -25,20 +19,16 @@ class HeadHunterAPI(Parser):
         """Конструктор класса HeadHunter"""
         self.__url = 'https://api.hh.ru/vacancies'
         self.__headers = {'User-Agent': 'HH-User-Agent'}
-        self.__params = {'text': '', 'page': 0, 'per_page': 10}
+        self.__params = {'text': '', 'page': 0, 'per_page': 100}
         self.vacancies = []
-        # self._Parser__connection_to_api()
         super().__init__()
 
-    # def _Parser__connection_to_api(self):
-    #     """Приватный метод подключения к API"""
-    #     return requests.get(self.__url, headers=self.__headers, params=self.__params)
 
     def get_vacancies(self, keyword: str = "") -> list:
         """Метод загрузки вакансий с НН"""
         self.__params['text'] = keyword
         print("Поиск вакансий ", end="")
-        while self.__params.get('page') != 2:
+        while self.__params.get('page') != 20:
             response = requests.get(self.__url, headers=self.__headers, params=self.__params)
             if response.status_code != 200:
                 continue
@@ -46,6 +36,7 @@ class HeadHunterAPI(Parser):
             self.vacancies.extend(vacancies)
             self.__params['page'] += 1
             print("#", end="")
+        print()
         vacancies_formatted = []
         for vacancy in self.vacancies:
             if vacancy["salary"]:

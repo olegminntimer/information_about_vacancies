@@ -1,76 +1,71 @@
 import json
 import re
+from typing import Any
+
+
+def range_bounds_check(range_numbers: Any) -> list:
+    """Функция возвращает список [левая граница, правая граница] из введенной строки диапазона."""
+    if isinstance(range_numbers, str):
+        pattern = re.compile(r'\d+')
+        left_bound = pattern.match(range_numbers)
+        if left_bound:
+            right_bound = pattern.search(range_numbers, pos=len(left_bound.group(0)))
+            if right_bound:
+                return [int(left_bound.group(0)), int(right_bound.group(0))]
+            else:
+                return [int(left_bound.group(0)), 0]
+        else:
+            right_bound = pattern.search(range_numbers)
+            if right_bound:
+                return [0, int(right_bound.group(0))]
+            else:
+                return []
+    elif isinstance(range_numbers, int):
+        if range_numbers > 0:
+            return [range_numbers, 0]
+        else:
+            return []
 
 
 def filter_vacancies(vacancies: list, filter_words: list) -> list:
-    """Метод ищет вакансии по ключевым словам."""
+    """Функция ищет вакансии по ключевым словам."""
     filtered_vacancies_ = []
     pattern = "(?:" + "|".join(filter_words) + ")"
     for vacancy in vacancies:
-        if vacancy["snippet"]["requirement"]:
-            if bool(re.search(pattern, vacancy["snippet"]["requirement"], flags=re.IGNORECASE)):
+        if vacancy["requirement"]:
+            if bool(re.search(pattern, vacancy["requirement"], flags=re.IGNORECASE)):
                 filtered_vacancies_.append(vacancy)
     return filtered_vacancies_
 
 
 def get_vacancies_by_salary(vacancies:list, salary_range: str) -> list:
-    """Метод делает выборку по диапазону предлагаемой зарплаты"""
-    salary_limit = []
-    for i in re.split('[- ]', salary_range):
-        if i != '':
-            salary_limit.append(i)
-    try:
-        left_limit = int(salary_limit[0])
-    except TypeError:
-        left_limit = 0
-    try:
-        right_limit = int(salary_limit[1])
-    except TypeError:
-        right_limit = 0
-
-    ranged_vacancies_ = []
-    print(salary_limit)
-    if (left_limit > 0) and (right_limit > 0):
-        for vacancy in vacancies:
-            if vacancy["salary"]:
-                if vacancy["salary"]["from"]:
-                    if salary_limit[0] <= vacancy["salary"]["from"] <= salary_limit[1]:
-                        ranged_vacancies_.append(vacancy)
-                    else:
-                        if salary_limit[0] <= vacancy["salary"]["to"] <= salary_limit[1]:
-                            ranged_vacancies.append(vacancy)
-    elif isinstance(salary_limit[0], int) and not(isinstance(salary_limit[1], int)):
-        for vacancy in vacancies:
-            if vacancy["salary"]:
-                if vacancy["salary"]["from"]:
-                    if salary_limit[0] <= vacancy["salary"]["from"]:
-                        ranged_vacancies_.append(vacancy)
-    else:
-        print("Не верно задан диапазон зарплат!")
+    """Функция делает выборку по диапазону предлагаемой зарплаты"""
+    limits = range_bounds_check(salary_range)
+    if not limits:
+        print("Не введен диапазон зарплаты!")
         return []
-    return ranged_vacancies
-
-    print(ranged_vacancies)
-
-
-
-
-def sort_vacancies(ranged_vacancies):
-    pass
-
-
-def get_top_vacancies(sorted_vacancies, top_n):
-    pass
+    ranged_vacancies_ = []
+    for vacancy in vacancies:
+        if vacancy["salary"]:
+            if limits[0] <= vacancy["salary"]["from"] <= limits[1]:
+                ranged_vacancies_.append(vacancy)
+                continue
+            if limits[0] <= vacancy["salary"]["to"] <= limits[1]:
+                ranged_vacancies_.append(vacancy)
+    return ranged_vacancies_
 
 
-def print_vacancies(top_vacancies):
-    pass
+def sort_vacancies(vacancies:list) -> list:
+    """Функция сортирует список вакансий по убыванию предлагаемой зарплаты."""
+    return sorted(vacancies, key=lambda x: (x["salary"]["from"], x["salary"]["to"]), reverse=True)
 
-if __name__ == "__main__":
-    with open('../data/vacancies_hh.json', encoding="utf-8") as file:
-        vacancies_list = json.load(file)
-    #
-    # filtered_vacancies = filter_vacancies(vacancies_list, ['java', 'git'])
-    # print(filtered_vacancies)
-    ranged_vacancies = get_vacancies_by_salary(vacancies_list,"50000 - 200000 rub")
-    print(ranged_vacancies)
+
+def get_top_vacancies(vacancies: list, top_n: int):
+    """Функция возвращает первые top_n вакансии по зарплате"""
+    return vacancies[:top_n]
+
+
+def print_vacancies(vacancies: list) -> None:
+    """Функция выводит на экран вакансии из выбранного списка"""
+    for i in vacancies:
+        print(json.dumps(i, ensure_ascii=False, indent=4))

@@ -3,7 +3,7 @@ import os.path
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from src.hh_interaction import HeadHunterAPI
+# from src.hh_interaction import HeadHunterAPI
 from src.vacancies import Vacancy
 
 
