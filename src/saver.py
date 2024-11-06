@@ -1,8 +1,8 @@
 import json
 import os.path
+
 from abc import ABC, abstractmethod
 from pathlib import Path
-
 from src.hh_interaction import HeadHunterAPI
 from src.vacancies import Vacancy
 
@@ -34,17 +34,17 @@ class JSONSaver(Saver):
         """Конструктор класса JSONSaver."""
         self.__filename = filename
 
-    def save_to(self, vacancies_list: list) -> None:
+    def save_to(self, vacancies: list) -> None:
         """Метод сохранения информации в файл."""
-        new_vacancies_file = vacancies_list
+        new_vacancies_file = vacancies
         if os.path.isfile(self.__filename):
+            new_vacancies_file = []
             # считываем из файла сохраненный ранее список
             with open(self.__filename, encoding="utf-8") as file:
                 vacancies_file = json.load(file)
             # Добавляем к списку в файле список с новым запросом
-            vacancies_file.extend(vacancies_list)
+            vacancies_file.extend(vacancies)
             # убираем дубликаты
-            new_vacancies_file = []
             for dictionary in vacancies_file:
                 if dictionary not in new_vacancies_file:
                     new_vacancies_file.append(dictionary)
@@ -54,14 +54,14 @@ class JSONSaver(Saver):
 
     def add_vacancy(self, vacancy: [Vacancy | dict]) -> None:
         """Метод добавления информации о вакансии в файл."""
-        # считываем из файла сохраненный ранее список
-        with open(self.__filename, encoding="utf-8") as file:
-            vacancies = json.load(file)
         if isinstance(vacancy, Vacancy):
-            vacancy_dict = vacancy.to_dict()
+            vacancy_dict = vacancy.to_file()
         else:
             print("Неправильный формат вакансии!")
             return
+        # считываем из файла сохраненный ранее список
+        with open(self.__filename, encoding="utf-8") as file:
+            vacancies = json.load(file)
         # Проверяем вакансию на совпадение по полю "alternate_url"
         is_presence = False
         for i in vacancies:
@@ -75,24 +75,26 @@ class JSONSaver(Saver):
 
     def delete_vacancy(self, vacancy: Vacancy) -> None:
         """Метод удаления информации о вакансии из файла."""
-        with open(self.__filename, encoding="utf-8") as file:
-            vacancies = json.load(file)
         if isinstance(vacancy, Vacancy):
-            vacancy_dict = vacancy.to_dict()
+            vacancy_dict = vacancy.to_file()
         else:
             print("Неправильный формат вакансии!")
             return
+        # считываем из файла сохраненный ранее список
+        with open(self.__filename, encoding="utf-8") as file:
+            vacancies = json.load(file)
         is_presence = False
+        # Проверяем в списке вакансию на совпадение по полю "alternate_url"
         for i in vacancies:
             if vacancy_dict["alternate_url"] == i["alternate_url"]:
                 is_presence = True
                 vacancies.remove(i)
+        # Если удалили из списка вакансию, то измененный vacancies записываем в файл
         if is_presence:
             with open(self.__filename, "w", encoding="utf-8") as file:
                 json.dump(vacancies, file, ensure_ascii=False)
         else:
             print("Такой вакансии нет в файле.")
-
 
 # if __name__ == "__main__":
 #     hh_api = HeadHunterAPI()
