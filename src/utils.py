@@ -1,12 +1,11 @@
 import json
 import re
-from typing import Any
 
 
-def range_bounds_check(range_numbers: Any) -> list:
+def range_bounds_check(range_numbers: str) -> list:
     """Функция возвращает список [левая граница, правая граница] из введенной строки диапазона."""
     if isinstance(range_numbers, str):
-        pattern = re.compile(r'\d+')
+        pattern = re.compile(r"\d+")
         left_bound = pattern.match(range_numbers)
         if left_bound:
             right_bound = pattern.search(range_numbers, pos=len(left_bound.group(0)))
@@ -38,7 +37,7 @@ def filter_vacancies(vacancies: list, filter_words: list) -> list:
     return filtered_vacancies_
 
 
-def get_vacancies_by_salary(vacancies:list, salary_range: str) -> list:
+def get_vacancies_by_salary(vacancies: list, salary_range: str) -> list:
     """Функция делает выборку по диапазону предлагаемой зарплаты"""
     limits = range_bounds_check(salary_range)
     if not limits:
@@ -55,12 +54,12 @@ def get_vacancies_by_salary(vacancies:list, salary_range: str) -> list:
     return ranged_vacancies_
 
 
-def sort_vacancies(vacancies:list) -> list:
+def sort_vacancies(vacancies: list) -> list:
     """Функция сортирует список вакансий по убыванию предлагаемой зарплаты."""
     return sorted(vacancies, key=lambda x: (x["salary"]["from"], x["salary"]["to"]), reverse=True)
 
 
-def get_top_vacancies(vacancies: list, top_n: int):
+def get_top_vacancies(vacancies: list, top_n: int) -> None:
     """Функция возвращает первые top_n вакансии по зарплате"""
     return vacancies[:top_n]
 

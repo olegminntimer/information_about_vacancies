@@ -1,8 +1,8 @@
 import json
 import os.path
-
 from abc import ABC, abstractmethod
 from pathlib import Path
+
 # from src.hh_interaction import HeadHunterAPI
 from src.vacancies import Vacancy
 
@@ -28,6 +28,7 @@ class Saver(ABC):
 
 class JSONSaver(Saver):
     """Класс для сохранения информации в JSON-файл."""
+
     BASE_DIR = Path(__file__).resolve().parent.parent
 
     def __init__(self, filename: str = str(BASE_DIR / "data" / "vacancies_hh.json")):
@@ -52,7 +53,7 @@ class JSONSaver(Saver):
         with open(self.__filename, "w", encoding="utf-8") as file:
             json.dump(new_vacancies_file, file, ensure_ascii=False)
 
-    def add_vacancy(self, vacancy: [Vacancy | dict]) -> None:
+    def add_vacancy(self, vacancy: Vacancy) -> None:
         """Метод добавления информации о вакансии в файл."""
         if isinstance(vacancy, Vacancy):
             vacancy_dict = vacancy.to_file()
@@ -95,6 +96,7 @@ class JSONSaver(Saver):
                 json.dump(vacancies, file, ensure_ascii=False)
         else:
             print("Такой вакансии нет в файле.")
+
 
 # if __name__ == "__main__":
 #     hh_api = HeadHunterAPI()

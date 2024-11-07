@@ -1,13 +1,13 @@
-import requests
-
 from abc import ABC, abstractmethod
+
+import requests
 
 
 class Parser(ABC):
     """Абстрактный класс подключения к API и получения вакансий."""
 
     @abstractmethod
-    def get_vacancies(self, keyword):
+    def get_vacancies(self, keyword: str):
         """Абстрактный метод получения коллекции вакансий."""
         pass
 
@@ -17,38 +17,39 @@ class HeadHunterAPI(Parser):
 
     def __init__(self):
         """Конструктор класса HeadHunter"""
-        self.__url = 'https://api.hh.ru/vacancies'
-        self.__headers = {'User-Agent': 'HH-User-Agent'}
-        self.__params = {'text': '', 'page': 0, 'per_page': 100}
+        self.__url = "https://api.hh.ru/vacancies"
+        self.__headers = {"User-Agent": "HH-User-Agent"}
+        self.__params = {"text": "", "page": 0, "per_page": 5}
         self.vacancies = []
         super().__init__()
 
-
     def get_vacancies(self, keyword: str = "") -> list:
         """Метод загрузки вакансий с НН"""
-        self.__params['text'] = keyword
-        print("Поиск вакансий ", end="")
-        while self.__params.get('page') != 20:
+        self.__params["text"] = keyword
+        while self.__params.get("page") != 2:
             response = requests.get(self.__url, headers=self.__headers, params=self.__params)
             if response.status_code != 200:
                 continue
-            vacancies = response.json()['items']
+            vacancies = response.json()["items"]
             self.vacancies.extend(vacancies)
-            self.__params['page'] += 1
-            print("#", end="")
-        print()
+            self.__params["page"] += 1
         vacancies_formatted = []
         for vacancy in self.vacancies:
             if vacancy["salary"]:
-                if not(vacancy["salary"]["from"]):
+                if not (vacancy["salary"]["from"]):
                     vacancy["salary"]["from"] = 0
-                if not(vacancy["salary"]["to"]):
+                if not (vacancy["salary"]["to"]):
                     vacancy["salary"]["to"] = 0
             else:
                 vacancy["salary"] = 0
             vacancies_formatted.append(
-                {"name": vacancy["name"], "salary": vacancy["salary"], "alternate_url": vacancy["alternate_url"],
-                 "requirement": vacancy["snippet"]["requirement"]})
+                {
+                    "name": vacancy["name"],
+                    "salary": vacancy["salary"],
+                    "alternate_url": vacancy["alternate_url"],
+                    "requirement": vacancy["snippet"]["requirement"],
+                }
+            )
         return vacancies_formatted
 
 

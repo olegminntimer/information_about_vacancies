@@ -1,14 +1,14 @@
-# import re
 from typing import Any
 
 from src.utils import range_bounds_check
 
 
-class Vacancy():
+class Vacancy:
     """Класс для работы с вакансиями"""
-    __slots__ = 'name', 'salary', 'url', 'requirement'
 
-    def __init__(self, name: str, salary: str, url: str, requirement: str) -> None:
+    __slots__ = "name", "salary", "url", "requirement"
+
+    def __init__(self, name: str, salary: str, url: str, requirement: str):
         """Конструктор класса Vacancy"""
         self.name = name
         self.salary = self.__valid_salary(salary)
@@ -16,16 +16,16 @@ class Vacancy():
         self.requirement = requirement
 
     @classmethod
-    def __valid_salary(cls, salary: Any) -> int | dict:
+    def __valid_salary(cls, salary: str) -> int | dict:
         """Приватный метод проверки диапазона зарплаты"""
         limits = range_bounds_check(salary)
         if limits:
-            return {"from": limits[0], "to": limits[1], "currency": "RUB"}
+            return {"from": limits[0], "to": limits[1], "currency": "RUR"}
         else:
             return 0
 
     @classmethod
-    def __verify_data(cls, some) -> int:
+    def __verify_data(cls, some) -> Any:
         """Валидация при сравнении вакансий"""
         if not isinstance(some, Vacancy):
             raise TypeError("Операнд должен иметь тип Vacancy")
@@ -40,11 +40,11 @@ class Vacancy():
         return self.__verify_data(self) == self.__verify_data(other)
 
     def __lt__(self, other) -> bool:
-        """Магический метод проверки, что операнд слева меньше операнда справа """
+        """Магический метод проверки, что операнд слева меньше операнда справа"""
         return self.__verify_data(self) < self.__verify_data(other)
 
     def __le__(self, other) -> bool:
-        """Магический метод проверки, что операнд слева меньше или равен операнду справа """
+        """Магический метод проверки, что операнд слева меньше или равен операнду справа"""
         return self.__verify_data(self) <= self.__verify_data(other)
 
     def to_file(self) -> dict:
