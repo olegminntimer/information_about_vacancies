@@ -25,6 +25,27 @@ def range_bounds_check(range_numbers: str) -> list:
         else:
             return []
 
+def list_formatter(vacancies: list) -> list:
+    """Функция изменяет формат полученного списка с сайта в упрощенный список."""
+    vacancies_formatted = []
+    for vacancy in vacancies:
+        if vacancy["salary"]:
+            if not (vacancy["salary"]["from"]):
+                vacancy["salary"]["from"] = 0
+            if not (vacancy["salary"]["to"]):
+                vacancy["salary"]["to"] = 0
+        else:
+            vacancy["salary"] = 0
+        vacancies_formatted.append(
+            {
+                "name": vacancy["name"],
+                "salary": vacancy["salary"],
+                "alternate_url": vacancy["alternate_url"],
+                "requirement": vacancy["snippet"]["requirement"],
+            }
+        )
+    return vacancies_formatted
+
 
 def filter_vacancies(vacancies: list, filter_words: list) -> list:
     """Функция ищет вакансии по ключевым словам."""

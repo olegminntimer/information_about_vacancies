@@ -1,5 +1,6 @@
 from src.hh_interaction import HeadHunterAPI
-from src.utils import filter_vacancies, get_vacancies_by_salary, sort_vacancies, get_top_vacancies, print_vacancies
+from src.utils import filter_vacancies, get_vacancies_by_salary, sort_vacancies, get_top_vacancies, print_vacancies, \
+    list_formatter
 
 
 def user_interaction():
@@ -10,7 +11,8 @@ def user_interaction():
     # Ищем вакансии по запросу
     hh_api = HeadHunterAPI()
     vacancies_list = hh_api.get_vacancies(search_query)
-    filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
+    vacancies_formatted = list_formatter(vacancies_list)
+    filtered_vacancies = filter_vacancies(vacancies_formatted, filter_words)
     ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
     sorted_vacancies = sort_vacancies(ranged_vacancies)
     top_vacancies = get_top_vacancies(sorted_vacancies, top_n)

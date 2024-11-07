@@ -6,7 +6,7 @@ from src.hh_interaction import HeadHunterAPI
 
 class TestHeadHunterAPI(unittest.TestCase):
 
-    @patch("requests.get")  # Мокаем requests.get
+    @patch("src.hh_interaction.requests.get")  # Мокаем requests.get
     def test_get_vacancies(self, mock_get):
         # Создаем замоканный ответ, который будет возвращаться вместо реального запроса
         mock_response = MagicMock()
@@ -25,9 +25,9 @@ class TestHeadHunterAPI(unittest.TestCase):
         mock_get.assert_called_with(
             "https://api.hh.ru/vacancies",
             headers={"User-Agent": "HH-User-Agent"},
-            params={"text": "Python Developer", "page": 0, "per_page": 100},
+            params={"text": "Python Developer", "page": 20, "per_page": 100},
         )
 
 
-# if __name__ == '__main__':
-#     unittest.main()
+if __name__ == '__main__':
+    unittest.main()

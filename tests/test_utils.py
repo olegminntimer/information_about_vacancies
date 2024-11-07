@@ -1,4 +1,7 @@
-from src.utils import filter_vacancies, get_top_vacancies, get_vacancies_by_salary, range_bounds_check, sort_vacancies
+import json
+
+from src.utils import filter_vacancies, get_top_vacancies, get_vacancies_by_salary, range_bounds_check, sort_vacancies, \
+    list_formatter
 
 
 def test_range_bounds_check() -> None:
@@ -22,9 +25,7 @@ def test_filter_vacancies(vacancies_test: list) -> None:
                 "currency": "RUR",
             },
             "alternate_url": "https://hh.ru/vacancy/110134917",
-            "requirement": "Наличие примеров работ в git. Опыт работы с асинхронным \
-            <highlighttext>python</highlighttext>. Опыт деплоя проектов. Опыт работы с celery, \
-            redis, docker, supervisor.",
+            "requirement": "Наличие примеров работ в git. Опыт работы с асинхронным <highlighttext>python</highlighttext>. Опыт деплоя проектов. Опыт работы с celery, redis, docker, supervisor.",
         }
     ]
 
@@ -40,9 +41,7 @@ def test_get_vacancies_by_salary(vacancies_test: list) -> None:
                 "currency": "RUR",
             },
             "alternate_url": "https://hh.ru/vacancy/110134917",
-            "requirement": "Наличие примеров работ в git. Опыт работы с асинхронным \
-            <highlighttext>python</highlighttext>. Опыт деплоя проектов. Опыт работы с celery, \
-            redis, docker, supervisor.",
+            "requirement": "Наличие примеров работ в git. Опыт работы с асинхронным <highlighttext>python</highlighttext>. Опыт деплоя проектов. Опыт работы с celery, redis, docker, supervisor.",
         }
     ]
 
@@ -68,8 +67,15 @@ def test_get_top_vacancies_1(vacancies_test_3: list) -> None:
                 "currency": "RUR",
             },
             "alternate_url": "https://hh.ru/vacancy/109787570",
-            "requirement": "Arch based linux - будет большим плюсом. Bash scripts (скрипты) - \
-            профи. <highlighttext>Python</highlighttext> базовые знания - будет большим плюсом. \
-            Ansible - будет большим плюсом. ",
+            "requirement": "Arch based linux - будет большим плюсом. Bash scripts (скрипты) - профи. <highlighttext>Python</highlighttext> базовые знания - будет большим плюсом. Ansible - будет большим плюсом. ",
         }
     ]
+
+
+def test_list_formatter(vacancies_from_hh_str: str) -> None:
+    vacancies_from_hh = json.loads(vacancies_from_hh_str)
+    vacancies_formatted = list_formatter(vacancies_from_hh)
+    assert vacancies_formatted == [{'name': 'Менеджер по работе с клиентами (МЕРКАТОР)',
+                                  'salary': {'from': 100000, 'to': 0, 'currency': 'RUR', 'gross': True},
+                                  'alternate_url': 'https://hh.ru/vacancy/93161709',
+                                  'requirement': 'Опыт в продажах или с клиентами. Грамотная речь. Активность. Коммуникабельность.'}]

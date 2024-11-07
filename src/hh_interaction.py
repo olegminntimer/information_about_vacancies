@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 
 import requests
 
+from src.utils import list_formatter
+
 
 class Parser(ABC):
     """Абстрактный класс подключения к API и получения вакансий."""
@@ -19,38 +21,21 @@ class HeadHunterAPI(Parser):
         """Конструктор класса HeadHunter"""
         self.__url = "https://api.hh.ru/vacancies"
         self.__headers = {"User-Agent": "HH-User-Agent"}
-        self.__params = {"text": "", "page": 0, "per_page": 5}
+        self.__params = {"text": "", "page": 0, "per_page": 100}
         self.vacancies = []
         super().__init__()
 
     def get_vacancies(self, keyword: str = "") -> list:
         """Метод загрузки вакансий с НН"""
         self.__params["text"] = keyword
-        while self.__params.get("page") != 2:
+        while self.__params.get("page") != 20:
             response = requests.get(self.__url, headers=self.__headers, params=self.__params)
-            if response.status_code != 200:
-                continue
+            # if response.status_code != 200:
+            #     continue
             vacancies = response.json()["items"]
             self.vacancies.extend(vacancies)
             self.__params["page"] += 1
-        vacancies_formatted = []
-        for vacancy in self.vacancies:
-            if vacancy["salary"]:
-                if not (vacancy["salary"]["from"]):
-                    vacancy["salary"]["from"] = 0
-                if not (vacancy["salary"]["to"]):
-                    vacancy["salary"]["to"] = 0
-            else:
-                vacancy["salary"] = 0
-            vacancies_formatted.append(
-                {
-                    "name": vacancy["name"],
-                    "salary": vacancy["salary"],
-                    "alternate_url": vacancy["alternate_url"],
-                    "requirement": vacancy["snippet"]["requirement"],
-                }
-            )
-        return vacancies_formatted
+        return self.vacancies
 
 
 # if __name__ == "__main__":

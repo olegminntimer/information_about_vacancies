@@ -15,9 +15,7 @@ def test_saver_save_to(vacancies_test: list, json_saver_test: list) -> None:
         "name": "QA engineer",
         "salary": 0,
         "alternate_url": "https://hh.ru/vacancy/110110217",
-        "requirement": "...части совершенствования процессов тестирования. Желание развиваться в \
-        автоматизации тест кейсов (Java или <highlighttext>Python</highlighttext>). Самостоятельность. \
-        Опыт автоматизации тест кейсов (Java, <highlighttext>Python</highlighttext>).",
+        "requirement": "...части совершенствования процессов тестирования. Желание развиваться в автоматизации тест кейсов (Java или <highlighttext>Python</highlighttext>). Самостоятельность. Опыт автоматизации тест кейсов (Java, <highlighttext>Python</highlighttext>).",
     }
 
 
